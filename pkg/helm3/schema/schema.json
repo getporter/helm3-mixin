@@ -23,8 +23,12 @@
               "description": "Version of helm to install in the bundle",
               "type": "string"
             },
-            "clientPlatform": {
-              "description": "Operating system of the helm client to install in the bundle, for example linux",
+            "apiVersion": {
+              "description": "Version of kubernetes api",
+              "type": "string"
+            },
+            "imagePlatform": {
+              "description": "Operating system of the invocation image, for example debian. Or none for disable generation.",
               "type": "string"
             },
             "clientArchitecture": {
