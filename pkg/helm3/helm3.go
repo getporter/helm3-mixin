@@ -14,6 +14,8 @@ import (
 )
 
 const defaultClientVersion string = "v3.8.2"
+const defaultApiVersion string = "v1.22.1"
+const defaultImagePlatform string = "default"
 const defaultClientPlatform string = "linux"
 const defaultClientArchitecture string = "amd64"
 
