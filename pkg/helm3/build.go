@@ -154,20 +154,22 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/${
 		m.HelmClientVersion = suppliedClientVersion
 	}
 
-	// todo! fix helm3.go structure Mixin
-	//if inputConfig.Config.ImagePlatform != "" {
-	//	m.HelmClientPlatform = inputConfig.Config.ImagePlatform
-	//}
+	// fix helm3.go structure Mixin
+	m.HelmClientVersion = mainConfig.Config.ClientVersion
+	m.HelmClientArchitecture = mainConfig.Config.ClientArchitecture
+	m.KubernetesApiVersion = mainConfig.Config.ApiVersion
+	m.InvocationImagePlatform = mainConfig.Config.ImagePlatform
 
-	// todo! fix helm3.go structure Mixin
-	if mainConfig.Config.ClientArchitecture != "" {
-		m.HelmClientArchitecture = mainConfig.Config.ClientArchitecture
+	// ImagePlatform == "none" is reserved word for supress generation
+	if mainConfig.Config.ImagePlatform == "none" {
+		fmt.Fprintln(m.Out, "# helm mixin buildtime ouput was supressed")
+		return nil
 	}
 
 	// Add environment variables
-	fmt.Fprintf(m.Out, "ENV CLIENT_VERSION=%s\n", m.HelmClientVersion)
+	fmt.Fprintf(m.Out, "ENV CLIENT_VERSION=%s\n", mainConfig.Config.ClientVersion)
 	fmt.Fprintf(m.Out, "ENV API_VERSION=%s\n", mainConfig.Config.ApiVersion)
-	fmt.Fprintf(m.Out, "ENV CLIENT_ARCH=%s\n", m.HelmClientArchitecture)
+	fmt.Fprintf(m.Out, "ENV CLIENT_ARCH=%s\n", mainConfig.Config.ClientArchitecture)
 
 	//Insert initial lines for actual image platform
 	for _, item := range platformConfig.Platforms {

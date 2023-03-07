@@ -16,26 +16,30 @@ import (
 const defaultClientVersion string = "v3.8.2"
 const defaultApiVersion string = "v1.22.1"
 const defaultImagePlatform string = "default"
-const defaultClientPlatform string = "linux"
+const defaultClientPlatform string = "linux" // it`s absolutely true
 const defaultClientArchitecture string = "amd64"
 
 // Helm is the logic behind the helm mixin
 type Mixin struct {
 	runtime.RuntimeConfig
-	ClientFactory          kubernetes.ClientFactory
-	HelmClientVersion      string
-	HelmClientPlatform     string
-	HelmClientArchitecture string
+	ClientFactory           kubernetes.ClientFactory
+	HelmClientVersion       string
+	HelmClientPlatform      string
+	HelmClientArchitecture  string
+	KubernetesApiVersion    string
+	InvocationImagePlatform string
 }
 
 // New helm mixin client, initialized with useful defaults.
 func New() *Mixin {
 	return &Mixin{
-		RuntimeConfig:          runtime.NewConfig(),
-		ClientFactory:          kubernetes.New(),
-		HelmClientVersion:      defaultClientVersion,
-		HelmClientPlatform:     defaultClientPlatform,
-		HelmClientArchitecture: defaultClientArchitecture,
+		RuntimeConfig:           runtime.NewConfig(),
+		ClientFactory:           kubernetes.New(),
+		HelmClientVersion:       defaultClientVersion,
+		HelmClientPlatform:      defaultClientPlatform,
+		HelmClientArchitecture:  defaultClientArchitecture,
+		KubernetesApiVersion:    defaultApiVersion,
+		InvocationImagePlatform: defaultImagePlatform,
 	}
 }
 
