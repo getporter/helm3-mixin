@@ -59,25 +59,25 @@ type Config struct {
 	Platforms []Platform `yaml:"platforms"`
 }
 
-// Build will generate the necessary Dockerfile lines
-// for an invocation image using this mixin
-func (m *Mixin) Build(ctx context.Context) error {
-
-	// make master configures
-	platformConfig := Config{
-		Platforms: []Platform{
-			{
-				Name: "default",
-				Init: `ENV HELM_EXPERIMENTAL_OCI=1
+// master configure
+var PlatformConfig = Config{
+	Platforms: []Platform{
+		{
+			Name: "default",
+			Init: `ENV HELM_EXPERIMENTAL_OCI=1
 RUN apt-get update && apt-get install -y curl
 RUN curl https://get.helm.sh/helm-${CLIENT_VERSION}-linux-${CLIENT_ARCH}.tar.gz --output helm3.tar.gz
 RUN tar -xvf helm3.tar.gz && rm helm3.tar.gz
 RUN mv linux-${CLIENT_ARCH}/helm /usr/local/bin/helm3
 RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/${API_VERSION}/bin/linux/${CLIENT_ARCH}/kubectl &&\
     mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl`,
-			},
 		},
-	}
+	},
+}
+
+// Build will generate the necessary Dockerfile lines
+// for an invocation image using this mixin
+func (m *Mixin) Build(ctx context.Context) error {
 
 	mainConfig := BuildInput{
 		Config: MixinConfig{
@@ -105,7 +105,7 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/${
 			log.Fatal(err)
 		}
 		defer fs.Close()
-		content, _ := yaml.Marshal(platformConfig)
+		content, _ := yaml.Marshal(PlatformConfig)
 		fmt.Fprintln(fs, string(content))
 	} else {
 		// read and merge custom config
@@ -119,7 +119,7 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/${
 			log.Fatal(err)
 		}
 		// note, key "platforms" will be overwritten!
-		if err = mergo.Merge(&platformConfig, customConfig, mergo.WithOverride); err != nil {
+		if err = mergo.Merge(&PlatformConfig, customConfig, mergo.WithOverride); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -167,12 +167,12 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/${
 	}
 
 	// Add environment variables
-	fmt.Fprintf(m.Out, "ENV CLIENT_VERSION=%s\n", mainConfig.Config.ClientVersion)
-	fmt.Fprintf(m.Out, "ENV API_VERSION=%s\n", mainConfig.Config.ApiVersion)
-	fmt.Fprintf(m.Out, "ENV CLIENT_ARCH=%s\n", mainConfig.Config.ClientArchitecture)
+	fmt.Fprintf(m.Out, "ENV CLIENT_VERSION=%s\n", m.HelmClientVersion)
+	fmt.Fprintf(m.Out, "ENV API_VERSION=%s\n", m.KubernetesApiVersion)
+	fmt.Fprintf(m.Out, "ENV CLIENT_ARCH=%s\n", m.HelmClientArchitecture)
 
 	//Insert initial lines for actual image platform
-	for _, item := range platformConfig.Platforms {
+	for _, item := range PlatformConfig.Platforms {
 		if item.Name == mainConfig.Config.ImagePlatform {
 			fmt.Fprintln(m.Out, item.Init)
 		}

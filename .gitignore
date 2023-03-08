@@ -2,3 +2,4 @@ bin
 .cnab
 .vscode/*
 .idea
+*.sh
