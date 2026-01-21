@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/MChorfa/porter-helm3/pkg/helm3"
+	"get.porter.sh/helm3-mixin/pkg/helm3"
 	"get.porter.sh/porter/pkg/porter/version"
 	"github.com/spf13/cobra"
 )

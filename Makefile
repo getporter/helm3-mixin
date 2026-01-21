@@ -1,5 +1,5 @@
 MIXIN = helm3
-PKG = github.com/MChorfa/porter-$(MIXIN)
+PKG = get.porter.sh/$(MIXIN)-mixin
 SHELL = bash
 
 GO = GO111MODULE=on go

@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"get.porter.sh/helm3-mixin/pkg/kubernetes"
 	"get.porter.sh/porter/pkg/runtime"
-	"github.com/MChorfa/porter-helm3/pkg/kubernetes"
 	"github.com/ghodss/yaml" // We are not using go-yaml because of serialization problems with jsonschema, don't use this library elsewhere
 	"github.com/pkg/errors"
 	"github.com/xeipuuv/gojsonschema"
